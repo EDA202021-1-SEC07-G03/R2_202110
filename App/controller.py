@@ -71,4 +71,4 @@ def category_id(catalog,nombre_categoria):
 # Funciones de consulta sobre el catálogo
 def videos_pais_categoria(catalog,pais,nombre_categoria,n):
     id=category_id(catalog,nombre_categoria)
-    print(model.videos_pais_categoria(catalog,pais,id,n))
+    return model.videos_pais_categoria(catalog,pais,id,n)

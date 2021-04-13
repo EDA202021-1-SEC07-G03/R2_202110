@@ -64,8 +64,7 @@ def add_node(catalog,input_file):
         for video in input_file:
             node=mp.newMap(20,maptype='PROBING',loadfactor=0.6)
             for x in video:
-                if x!='video_id':
-                    mp.put(node,x,video[x])
+                mp.put(node,x,video[x])
             mp.put(catalog['videos'],video['video_id'],node)
 # Funciones de consulta
 def videos_pais_categoria(catalog,pais,id,n):
@@ -74,13 +73,16 @@ def videos_pais_categoria(catalog,pais,id,n):
     for i in range(lt.size(keys)):
         key=lt.getElement(keys,i)
         valor_video=me.getValue(mp.get(catalog['videos'],key))
-        if me.getValue(mp.get(valor_video,'country'))==pais and me.getValue(mp.get(valor_video,'category_id'))==id:
+        if me.getValue(mp.get(valor_video,'country')).lower()==pais.lower() and me.getValue(mp.get(valor_video,'category_id'))==id:
             lt.addLast(lista,valor_video)
-    return (lt.getElement(lista,0))
+    mrg.sort(lista,cmpVideosbyViews)
+    return lt.subList(lista,1,n)
     
 # Funciones de comparacion
 def cmpVideosbyViews(video1,video2):
-    return(int(video1["views"])>int(video2["views"]))
+    video1=me.getValue(mp.get(video1,'views'))
+    video2=me.getValue(mp.get(video2,'views'))
+    return(int(video1)>int(video2))
 
 def cmpVideosbyLikes(video1,video2):
     return(int(video1["likes"])>int(video2["likes"]))
