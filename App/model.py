@@ -49,36 +49,9 @@ def newCatalog():
   
     catalog = {'videos':None,
                'category':None,
-               'video_id': None,
-               'trending_date': None,
-               'title': None,
-               'channel_title': None,
-               'category_id': None,
-               'publish_time': None,
-               'tags': None,
-               'views': None,
-               'likes': None,
-               'dislikes': None,
-               'country': None}
-
- 
-    catalog['videos'] = lt.newList('SINGLE_LINKED')
-    catalog['category'] = mp.newMap(50,
-                                maptype='PROBING',
-                                loadfactor=0.6)
-    catalog['video_id'] = mp.newMap(380000,
-                                maptype='PROBING',
-                                loadfactor=0.6,
-                                comparefunction=cmpVideosbyId)
-    catalog['views'] = mp.newMap(380000,
-                                maptype='PROBING',
-                                loadfactor=0.6,
-                                comparefunction=cmpVideosbyId)
-
-
-
-
-
+               }
+    catalog['videos'] = mp.newMap(380000,maptype='PROBING',loadfactor=0.6,comparefunction=cmpVideosbyId)
+    catalog['category'] = mp.newMap(50,maptype='PROBING',loadfactor=0.6)
     return catalog
     
 # Funciones para creacion de datos
@@ -86,22 +59,25 @@ def addVideo(catalog, video):
     lt.addLast(catalog['videos'], video)
 
 def addCategory(catalog, category):
-    mp.put(catalog['category'], str(category['id']),str(category['name']))
-    
-
-
-
-
-
-
-
-
-
-    
-
+    mp.put(catalog['category'], str(category['name']).strip(),str(category['id']))
+def add_node(catalog,input_file):
+        for video in input_file:
+            node=mp.newMap(20,maptype='PROBING',loadfactor=0.6)
+            for x in video:
+                if x!='video_id':
+                    mp.put(node,x,video[x])
+            mp.put(catalog['videos'],video['video_id'],node)
 # Funciones de consulta
-
-
+def videos_pais_categoria(catalog,pais,id,n):
+    lista=lt.newList('ARRAYLIST')
+    keys=mp.keySet(catalog['videos'])
+    for i in range(lt.size(keys)):
+        key=lt.getElement(keys,i)
+        valor_video=me.getValue(mp.get(catalog['videos'],key))
+        if me.getValue(mp.get(valor_video,'country'))==pais and me.getValue(mp.get(valor_video,'category_id'))==id:
+            lt.addLast(lista,valor_video)
+    return (lt.getElement(lista,0))
+    
 # Funciones de comparacion
 def cmpVideosbyViews(video1,video2):
     return(int(video1["views"])>int(video2["views"]))
@@ -110,7 +86,7 @@ def cmpVideosbyLikes(video1,video2):
     return(int(video1["likes"])>int(video2["likes"]))
 
 def cmpVideosbyId(id1, id2):
-
+    id2=me.getKey(id2)
     if (id1 == id2):
         return 0
     elif id1 > id2:

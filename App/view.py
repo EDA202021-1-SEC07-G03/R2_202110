@@ -26,6 +26,8 @@ import controller
 from DISClib.ADT import list as lt
 assert cf
 import time
+from DISClib.ADT import map as mp
+from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import insertionsort as ins
 from DISClib.Algorithms.Sorting import selectionsort as ses
 from DISClib.Algorithms.Sorting import shellsort as shs
@@ -40,9 +42,8 @@ operación solicitada
 
 def printMenu():
     print("Bienvenido")
-    print("1- Inicializar catálogo")
-    print("2- Cargar información en el catálogo")
-    print("3- Videos con mas likes por categoría")
+    print("1- Cargar información en el catálogo")
+    print("2- Videos tendencia por país y categoría")
 
 """
 Menu principal
@@ -57,30 +58,17 @@ while True:
     if int(inputs[0]) == 1:
         print("Inicializando Catálogo ....")
         catalog = controller.initCatalog()
-
-    elif int(inputs[0]) == 2:
         print("Cargando información de los archivos ....")
-        
         answer = controller.loadData(catalog)
-        print('Videos cargados: ' + str(lt.size(catalog['videos'])))
-        #Primer video cargado
-        print('Title: ' + lt.firstElement(catalog["videos"])['title'])
-        print('Channel title: ' + lt.firstElement(catalog["videos"])['channel_title'])
-        print('Trending date: ' + lt.firstElement(catalog["videos"])['trending_date'])
-        print('Country: ' + lt.firstElement(catalog["videos"])['country'])
-        print('Views: ' + lt.firstElement(catalog["videos"])['views'])
-        print('Likes: ' +lt.firstElement(catalog["videos"])['likes'])
-        print('Dislikes: ' +lt.firstElement(catalog["videos"])['dislikes'])
-
-
-
-        #Categorias
-        print(catalog['category']['table']['elements'])
-
-        print("Tiempo [ms]: ", f"{answer[0]:.3f}", "  ||  ",  "Memoria [kB]: ", f"{answer[1]:.3f}")
+        print('Videos cargados: ' + str(mp.size(catalog['videos'])))
+        print('Categorias cargadas:',mp.size(catalog['category']))
    
 
-    elif int(inputs[0]) == 3:
+    elif int(inputs[0]) == 2:
+        pais=(str(input('Digite el pais de su interes: ')))
+        nombre_categoria=(str(input('Digite la categoria de su interes: ')))
+        n= int(input('Indique la cantidad de videos que desea recibir: '))
+        controller.videos_pais_categoria(catalog,pais,nombre_categoria,n)
         pass
         
    
