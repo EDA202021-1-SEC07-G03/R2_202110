@@ -72,3 +72,10 @@ def category_id(catalog,nombre_categoria):
 def videos_pais_categoria(catalog,pais,nombre_categoria,n):
     id=category_id(catalog,nombre_categoria)
     return model.videos_pais_categoria(catalog,pais,id,n)
+def videos_tendencia_pais(catalog,pais):
+    return model.videos_tendencia_pais(catalog,pais)
+def videos_tendencia_categoria(catalog,nombre_categoria):
+    id=category_id(catalog,nombre_categoria)
+    return model.videos_tendencia_categoria(catalog,id)
+def videos_pais_tag():
+    return

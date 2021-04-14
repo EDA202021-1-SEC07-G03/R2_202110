@@ -65,19 +65,50 @@ def add_node(catalog,input_file):
             node=mp.newMap(20,maptype='PROBING',loadfactor=0.6)
             for x in video:
                 mp.put(node,x,video[x])
-            mp.put(catalog['videos'],video['video_id'],node)
+            if mp.contains(catalog['videos'],video['video_id'])==False:
+                mp.put(catalog['videos'],video['video_id'],node)
+            else:
+                mapa_interno=me.getValue(mp.get(catalog['videos'],video['video_id']))
+                actual=mp.get(mapa_interno,'trending_date')
+                nuevo=me.getValue(mp.get(node,'trending_date'))
+                mp.put(mapa_interno,'trending_date',(actual,nuevo))
 # Funciones de consulta
 def videos_pais_categoria(catalog,pais,id,n):
     lista=lt.newList('ARRAYLIST')
     keys=mp.keySet(catalog['videos'])
     for i in range(1,lt.size(keys)+1):
         key=lt.getElement(keys,i)
-        valor_video=me.getValue(mp.get(catalog['videos'],key))
-        if me.getValue(mp.get(valor_video,'country')).lower()==pais.lower() and me.getValue(mp.get(valor_video,'category_id'))==id:
-            lt.addLast(lista,valor_video)
+        mapa_interno=me.getValue(mp.get(catalog['videos'],key))
+        if me.getValue(mp.get(mapa_interno,'country')).lower()==pais.lower() and me.getValue(mp.get(mapa_interno,'category_id'))==id:
+            lt.addLast(lista,mapa_interno)
     mrg.sort(lista,cmpVideosbyViews)
     return lt.subList(lista,1,n)
-    
+def dias_tendencia(mapa_interno):
+    dias=len(me.getValue(mp.get(mapa_interno,'trending_date')))
+    return dias 
+def videos_tendencia_pais(catalog,pais):
+    keys=mp.keySet(catalog['videos'])
+    mayor=0
+    for i in range(1,lt.size(keys)+1):
+        key=lt.getElement(keys,i)
+        mapa_interno=me.getValue(mp.get(catalog['videos'],key))
+        dias=dias_tendencia(mapa_interno)
+        if me.getValue(mp.get(mapa_interno,'country')).lower()==pais.lower() and dias>mayor:
+            mayor=dias
+            r=mapa_interno
+    return r,mayor
+def videos_tendencia_categoria(catalog,id):
+    keys=mp.keySet(catalog['videos'])
+    mayor=0
+    for i in range(1,lt.size(keys)+1):
+        key=lt.getElement(keys,i)
+        mapa_interno=me.getValue(mp.get(catalog['videos'],key))
+        dias=dias_tendencia(mapa_interno)
+        if me.getValue(mp.get(mapa_interno,'category_id'))==id and dias>mayor:
+            mayor=dias
+            r=mapa_interno
+    return r,mayor
+
 # Funciones de comparacion
 def cmpVideosbyViews(video1,video2):
     video1=me.getValue(mp.get(video1,'views'))

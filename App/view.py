@@ -44,14 +44,13 @@ def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
     print("2- Videos tendencia por país y categoría")
-
+    print("3- Video trending por país")
+    print("4- Video trending por categoría")
+    print("5- Videos con más likes por país y tag")
+    print("6- Salir")
 """
 Menu principal
 """
-
-
-
-
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
@@ -78,11 +77,30 @@ while True:
             for key in keys:
                 print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
         print('-'*80)
-            
-            
-        
-   
 
+    elif int(inputs[0]) == 3:
+        pais=(str(input('Digite el pais de su interes: ')))
+        mapa=controller.videos_tendencia_pais(catalog,pais)[0]
+        dias=controller.videos_tendencia_pais(catalog,pais)[1]
+        keys=['title','channel_title','country']
+        print('*'*60)
+        print('VIDEO TENDENCIA EN',pais.upper())
+        for key in keys:
+            print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
+        print('dias_tendencia:',dias)
+        print('-'*80)
+
+    elif int(inputs[0]) == 4:
+        nombre_categoria=(str(input('Digite la categoria de su interes: ')))
+        mapa=controller.videos_tendencia_pais(catalog,nombre_categoria)[0]
+        dias=controller.videos_tendencia_categoria(catalog,nombre_categoria)[1]
+        keys=['title','channel_title','country']
+        print('*'*60)
+        print('VIDEO TENDENCIA EN',nombre_categoria.upper())
+        for key in keys:
+            print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
+        print('dias_tendencia:',dias)
+        print('-'*80)
     else:
         sys.exit(0)
 sys.exit(0)
