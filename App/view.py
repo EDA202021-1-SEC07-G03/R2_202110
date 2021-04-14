@@ -62,8 +62,7 @@ while True:
         answer = controller.loadData(catalog)
         print('Videos cargados: ' + str(mp.size(catalog['videos'])))
         print('Categorias cargadas:',mp.size(catalog['category']))
-        '''for i in range(lt.size(mp.keySet(catalog['videos']))):
-            print(lt.getElement(mp.keySet(catalog['videos']),i))'''
+        print('-'*80)
    
 
     elif int(inputs[0]) == 2:
@@ -71,14 +70,15 @@ while True:
         nombre_categoria=(str(input('Digite la categoria de su interes: ')))
         n= int(input('Indique la cantidad de videos que desea recibir: '))
         sublist=controller.videos_pais_categoria(catalog,pais,nombre_categoria,n)
-        print(sublist)
-        for i in range(lt.size(sublist)):
-            keys=mp.keySet(lt.getElement(sublist,i))
+        keys=['trending_date', 'title','channel_title','publish_time','views','likes','dislikes']
+        for i in range(1,lt.size(sublist)+1):
+            mapa=lt.getElement(sublist,i)
             print('*'*60)
-            print('VIDEO',i+1)
-            for x in range(lt.size(keys)):
-                llave_valor=mp.get(lt.getElement(sublist,i),lt.getElement(keys,x))
-                print(me.getKey(llave_valor),':',me.getValue(llave_valor))
+            print('VIDEO',i)
+            for key in keys:
+                print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
+        print('-'*80)
+            
             
         
    

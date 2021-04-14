@@ -70,7 +70,7 @@ def add_node(catalog,input_file):
 def videos_pais_categoria(catalog,pais,id,n):
     lista=lt.newList('ARRAYLIST')
     keys=mp.keySet(catalog['videos'])
-    for i in range(lt.size(keys)):
+    for i in range(1,lt.size(keys)+1):
         key=lt.getElement(keys,i)
         valor_video=me.getValue(mp.get(catalog['videos'],key))
         if me.getValue(mp.get(valor_video,'country')).lower()==pais.lower() and me.getValue(mp.get(valor_video,'category_id'))==id:
