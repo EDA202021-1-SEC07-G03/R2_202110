@@ -46,10 +46,8 @@ los mismos.
 
 # Construccion de modelos
 def newCatalog():
-  
     catalog = {'videos':None,
-               'category':None,
-               }
+               'category':None}
     catalog['videos'] = mp.newMap(380000,maptype='PROBING',loadfactor=0.6,comparefunction=cmpVideosbyId)
     catalog['category'] = mp.newMap(50,maptype='PROBING',loadfactor=0.6)
     return catalog
@@ -89,6 +87,7 @@ def dias_tendencia(mapa_interno):
 def videos_tendencia_pais(catalog,pais):
     keys=mp.keySet(catalog['videos'])
     mayor=0
+    r=None
     for i in range(1,lt.size(keys)+1):
         key=lt.getElement(keys,i)
         mapa_interno=me.getValue(mp.get(catalog['videos'],key))
@@ -100,15 +99,31 @@ def videos_tendencia_pais(catalog,pais):
 def videos_tendencia_categoria(catalog,id):
     keys=mp.keySet(catalog['videos'])
     mayor=0
+    r=None
     for i in range(1,lt.size(keys)+1):
         key=lt.getElement(keys,i)
         mapa_interno=me.getValue(mp.get(catalog['videos'],key))
         dias=dias_tendencia(mapa_interno)
-        if me.getValue(mp.get(mapa_interno,'category_id'))==id and dias>mayor:
+        id_video=me.getValue(mp.get(mapa_interno,'category_id'))
+        if id_video==id and dias>mayor:
+            print('PRUEBA')
             mayor=dias
             r=mapa_interno
     return r,mayor
-
+def videos_pais_tag(catalog,pais,tag,n):
+    lista=lt.newList('ARRAYLIST')
+    keys=mp.keySet(catalog['videos'])
+    for i in range(1,lt.size(keys)+1):
+        key=lt.getElement(keys,i)
+        mapa_interno=me.getValue(mp.get(catalog['videos'],key))
+        if me.getValue(mp.get(mapa_interno,'country')).lower()==pais.lower() and tag in me.getValue(mp.get(mapa_interno,'tags')):
+            lt.addLast(lista,mapa_interno)
+    mrg.sort(lista,cmpVideosbyLikes)
+    if lt.size(lista)<n:
+        sublist=lista
+    else:
+        sublist=lt.subList(lista,1,n)
+    return sublist
 # Funciones de comparacion
 def cmpVideosbyViews(video1,video2):
     video1=me.getValue(mp.get(video1,'views'))
@@ -116,7 +131,9 @@ def cmpVideosbyViews(video1,video2):
     return(int(video1)>int(video2))
 
 def cmpVideosbyLikes(video1,video2):
-    return(int(video1["likes"])>int(video2["likes"]))
+    video1=me.getValue(mp.get(video1,'likes'))
+    video2=me.getValue(mp.get(video2,'likes'))
+    return(int(video1)>int(video2))
 
 def cmpVideosbyId(id1, id2):
     id2=me.getKey(id2)
