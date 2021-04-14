@@ -68,17 +68,15 @@ while True:
         pais=(str(input('Digite el pais de su interes: ')))
         nombre_categoria=(str(input('Digite la categoria de su interes: ')))
         n= int(input('Indique la cantidad de videos que desea recibir: '))
-        t1=process_time()
         sublist=controller.videos_pais_categoria(catalog,pais,nombre_categoria,n)
-        t2=process_time()
         keys=['trending_date', 'title','channel_title','publish_time','views','likes','dislikes']
         for i in range(1,lt.size(sublist)+1):
             mapa=lt.getElement(sublist,i)
-            print('*'*60)
+            print('*'*80)
             print('VIDEO',i)
             for key in keys:
                 print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
-        print('tiempo de ejecucion:',t2-t1,'s---Memoria:',)
+        #print('tiempo de ejecucion:',t2-t1,'s---Memoria:',)
         print('-'*80)
 
     elif int(inputs[0]) == 3:
@@ -86,7 +84,7 @@ while True:
         mapa=controller.videos_tendencia_pais(catalog,pais)[0]
         dias=controller.videos_tendencia_pais(catalog,pais)[1]
         keys=['title','channel_title','country']
-        print('*'*60)
+        print('*'*80)
         print('VIDEO TENDENCIA EN',pais.upper())
         for key in keys:
             print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
@@ -95,32 +93,42 @@ while True:
 
     elif int(inputs[0]) == 4:
         nombre_categoria=(str(input('Digite la categoria de su interes: ')))
-        mapa=controller.videos_tendencia_pais(catalog,nombre_categoria)[0]
+        mapa=controller.videos_tendencia_categoria(catalog,nombre_categoria)[0]
         dias=controller.videos_tendencia_categoria(catalog,nombre_categoria)[1]
-        keys=['title','channel_title','country']
-        print('*'*60)
+        keys=['title','channel_title','country','trending_date']
+        print('*'*80)
         print('VIDEO TENDENCIA EN',nombre_categoria.upper())
         for key in keys:
             print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
         print('dias_tendencia:',dias)
         print('-'*80)
+
     elif int(inputs[0]) == 5:
         pais=(str(input('Digite el pais de su interes: ')))
-        tag=(str(input('Digite el tag de su interes: ')))
+        tag=('"'+str(input('Digite el tag de su interes: '))+'"')
         n= int(input('Indique la cantidad de videos que desea recibir: '))
         sublist=controller.videos_pais_tag(catalog,pais,tag,n)
+        size=lt.size(sublist)
         keys=['title','channel_title','publish_time','views','likes','dislikes','tags']
-        print(sublist)
-        for i in range(1,lt.size(sublist)+1):
-            mapa=lt.getElement(sublist,i)
-            print('*'*60)
-            print('VIDEO',i)
-            for key in keys:
-                if key=='tags':
-                    tags=str(me.getValue(mp.get(mapa,key))).split('|')
-                    tags=tags.join(', ')
-                print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
-        print('-'*80)
+        if size==0:
+            print('\nNo se han encontrado videos para el tag',tag,'en',pais+'\n')
+        else:
+            if size==1:
+                print('\nSe encontro el siguiente video en',pais,'con el tag',tag+':\n')
+            elif size>1:
+                print('\nSe encontraron los siguientes',size,'videos en',pais,'con el tag',tag+':\n')
+            for i in range(1,lt.size(sublist)+1):
+                mapa=lt.getElement(sublist,i)
+                print('*'*80)
+                print('VIDEO',i)
+                for key in keys:
+                    if key=='tags':
+                        tags=str(me.getValue(mp.get(mapa,key))).split('|')
+                        tags=', '.join(tags)
+                        print('tags:',tags)
+                    else:
+                        print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
+            print('-'*80)
     else:
         sys.exit(0)
 sys.exit(0)

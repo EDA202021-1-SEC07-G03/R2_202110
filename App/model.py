@@ -67,9 +67,10 @@ def add_node(catalog,input_file):
                 mp.put(catalog['videos'],video['video_id'],node)
             else:
                 mapa_interno=me.getValue(mp.get(catalog['videos'],video['video_id']))
-                actual=mp.get(mapa_interno,'trending_date')
+                actual=me.getValue(mp.get(mapa_interno,'trending_date'))
                 nuevo=me.getValue(mp.get(node,'trending_date'))
-                mp.put(mapa_interno,'trending_date',(actual,nuevo))
+                juntos=str(actual)+','+str(nuevo)
+                mp.put(mapa_interno,'trending_date',juntos)
 # Funciones de consulta
 def videos_pais_categoria(catalog,pais,id,n):
     lista=lt.newList('ARRAYLIST')
@@ -82,7 +83,8 @@ def videos_pais_categoria(catalog,pais,id,n):
     mrg.sort(lista,cmpVideosbyViews)
     return lt.subList(lista,1,n)
 def dias_tendencia(mapa_interno):
-    dias=len(me.getValue(mp.get(mapa_interno,'trending_date')))
+    dates=str(me.getValue(mp.get(mapa_interno,'trending_date'))).split(',')
+    dias=len(dates)
     return dias 
 def videos_tendencia_pais(catalog,pais):
     keys=mp.keySet(catalog['videos'])
@@ -106,7 +108,6 @@ def videos_tendencia_categoria(catalog,id):
         dias=dias_tendencia(mapa_interno)
         id_video=me.getValue(mp.get(mapa_interno,'category_id'))
         if id_video==id and dias>mayor:
-            print('PRUEBA')
             mayor=dias
             r=mapa_interno
     return r,mayor
