@@ -63,22 +63,30 @@ while True:
         print('Categorias cargadas:',mp.size(catalog['category']))
         print('-'*80)
    
-
+#REQUERIMIENTO 1
     elif int(inputs[0]) == 2:
         pais=(str(input('Digite el pais de su interes: ')))
         nombre_categoria=(str(input('Digite la categoria de su interes: ')))
         n= int(input('Indique la cantidad de videos que desea recibir: '))
         sublist=controller.videos_pais_categoria(catalog,pais,nombre_categoria,n)
         keys=['trending_date', 'title','channel_title','publish_time','views','likes','dislikes']
+        size=lt.size(sublist)
+        if size==0:
+            print('\nNo se han encontrado videos para la categoria',nombre_categoria,'en',pais+'\n')
+        else:
+            if size==1:
+                print('\nSe encontro el siguiente video en',pais,'para la categoria',nombre_categoria+':\n')
+            elif size>1:
+                print('\nSe encontraron los siguientes',size,'videos en',pais,'para la categoria',nombre_categoria+':\n')
         for i in range(1,lt.size(sublist)+1):
             mapa=lt.getElement(sublist,i)
             print('*'*80)
             print('VIDEO',i)
             for key in keys:
                 print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
-        #print('tiempo de ejecucion:',t2-t1,'s---Memoria:',)
         print('-'*80)
 
+#REQUERIMIENTO 2
     elif int(inputs[0]) == 3:
         pais=(str(input('Digite el pais de su interes: ')))
         mapa=controller.videos_tendencia_pais(catalog,pais)[0]
@@ -91,6 +99,7 @@ while True:
         print('dias_tendencia:',dias)
         print('-'*80)
 
+#REQUERIMIENTO 3
     elif int(inputs[0]) == 4:
         nombre_categoria=(str(input('Digite la categoria de su interes: ')))
         mapa=controller.videos_tendencia_categoria(catalog,nombre_categoria)[0]
@@ -103,6 +112,7 @@ while True:
         print('dias_tendencia:',dias)
         print('-'*80)
 
+#REQUERIMIENTO 4
     elif int(inputs[0]) == 5:
         pais=(str(input('Digite el pais de su interes: ')))
         tag=('"'+str(input('Digite el tag de su interes: '))+'"')

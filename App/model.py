@@ -57,7 +57,8 @@ def addVideo(catalog, video):
     lt.addLast(catalog['videos'], video)
 
 def addCategory(catalog, category):
-    mp.put(catalog['category'], str(category['name']).strip(),str(category['id']))
+    if not(str(category['name']).strip()=='Comedy' and str(category['id'])=='34'):
+        mp.put(catalog['category'], str(category['name']).strip(),str(category['id']))
 def add_node(catalog,input_file):
         for video in input_file:
             node=mp.newMap(20,maptype='PROBING',loadfactor=0.6)
@@ -71,7 +72,15 @@ def add_node(catalog,input_file):
                 nuevo=me.getValue(mp.get(node,'trending_date'))
                 juntos=str(actual)+','+str(nuevo)
                 mp.put(mapa_interno,'trending_date',juntos)
+
+def dias_tendencia(mapa_interno):
+    dates=str(me.getValue(mp.get(mapa_interno,'trending_date'))).split(',')
+    dias=len(dates)
+    return dias 
+
 # Funciones de consulta
+
+#REQUERIMIENTO 1
 def videos_pais_categoria(catalog,pais,id,n):
     lista=lt.newList('ARRAYLIST')
     keys=mp.keySet(catalog['videos'])
@@ -81,15 +90,17 @@ def videos_pais_categoria(catalog,pais,id,n):
         if me.getValue(mp.get(mapa_interno,'country')).lower()==pais.lower() and me.getValue(mp.get(mapa_interno,'category_id'))==id:
             lt.addLast(lista,mapa_interno)
     mrg.sort(lista,cmpVideosbyViews)
-    return lt.subList(lista,1,n)
-def dias_tendencia(mapa_interno):
-    dates=str(me.getValue(mp.get(mapa_interno,'trending_date'))).split(',')
-    dias=len(dates)
-    return dias 
+    if lt.size(lista)<n:
+        sublist=lista
+    else:
+        sublist=lt.subList(lista,1,n)
+    return sublist
+
+#REQUERIMIENTO 2
 def videos_tendencia_pais(catalog,pais):
     keys=mp.keySet(catalog['videos'])
     mayor=0
-    r=None
+    r=mp.newMap()
     for i in range(1,lt.size(keys)+1):
         key=lt.getElement(keys,i)
         mapa_interno=me.getValue(mp.get(catalog['videos'],key))
@@ -98,10 +109,12 @@ def videos_tendencia_pais(catalog,pais):
             mayor=dias
             r=mapa_interno
     return r,mayor
+
+#REQUERIMIENTO 3
 def videos_tendencia_categoria(catalog,id):
     keys=mp.keySet(catalog['videos'])
     mayor=0
-    r=None
+    r=mp.newMap()
     for i in range(1,lt.size(keys)+1):
         key=lt.getElement(keys,i)
         mapa_interno=me.getValue(mp.get(catalog['videos'],key))
@@ -111,6 +124,8 @@ def videos_tendencia_categoria(catalog,id):
             mayor=dias
             r=mapa_interno
     return r,mayor
+
+#REQUERIMIENTO 4
 def videos_pais_tag(catalog,pais,tag,n):
     lista=lt.newList('ARRAYLIST')
     keys=mp.keySet(catalog['videos'])
@@ -125,6 +140,7 @@ def videos_pais_tag(catalog,pais,tag,n):
     else:
         sublist=lt.subList(lista,1,n)
     return sublist
+
 # Funciones de comparacion
 def cmpVideosbyViews(video1,video2):
     video1=me.getValue(mp.get(video1,'views'))

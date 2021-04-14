@@ -66,7 +66,7 @@ def loadCategory(catalog):
 
 #Categorias
 def category_id(catalog,nombre_categoria):
-    return mp.get(catalog['category'],nombre_categoria)['value']
+    return me.getValue(mp.get(catalog['category'],nombre_categoria))
 
 # Funciones de consulta sobre el catálogo
 def videos_pais_categoria(catalog,pais,nombre_categoria,n):
