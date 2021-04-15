@@ -61,7 +61,14 @@ def deltaMemory(start_memory, stop_memory):
         delta_memory = delta_memory + stat.size_diff
     delta_memory = delta_memory/1024.0
     return delta_memory
-
+def contar_videos(catalog):
+    suma=0
+    keys=mp.keySet(catalog['countries'])
+    for i in range(1,lt.size(keys)+1):
+        key=lt.getElement(keys,i)
+        lt_pais=me.getValue(mp.get(catalog['countries'],key))
+        suma+=lt.size(lt_pais)
+    return suma
 """
 Menu principal
 """
@@ -77,14 +84,15 @@ while True:
         catalog = controller.initCatalog()
         print("Cargando información de los archivos ....")
         answer = controller.loadData(catalog)
-        print('Videos cargados: ' + str(mp.size(catalog['videos'])))
-        print('Categorias cargadas:',mp.size(catalog['category']))
         #
         stop_memory = getMemory()
         stop_time = getTime()
         tracemalloc.stop()
         delta_time = round(stop_time - start_time,2)
         delta_memory = round(deltaMemory(start_memory, stop_memory),2)
+        print('Paises:',mp.size(catalog['countries']))
+        print('Videos cargados:',contar_videos(catalog))
+        print('Categorias cargadas:',mp.size(catalog['category']))
         print("Tiempo [ms]:",delta_time)
         print("Memoria [kB]:",delta_memory,)
         print('-'*80)
@@ -207,7 +215,6 @@ while True:
                         print('tags:',tags)
                     else:
                         print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
-                        print('-'*80)
         #
         stop_memory = getMemory()
         stop_time = getTime()

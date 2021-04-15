@@ -50,7 +50,7 @@ def initCatalog():
 def loadData(catalog):
     loadVideos(catalog)
     loadCategory(catalog)
-    
+    loadCountries(catalog)
 
 
 def loadVideos(catalog):
@@ -64,6 +64,11 @@ def loadCategory(catalog):
     input_file2 = csv.DictReader(open(categoryfile, encoding='utf-8'),delimiter=('\t'))
     for category in input_file2:
         model.addCategory(catalog, category)
+def loadCountries(catalog):
+    vidsfile = cf.data_dir + 'videos-large.csv'
+    input_file1 = csv.DictReader(open(vidsfile, encoding='utf-8'))
+    for country in input_file1:
+        model.add_node_country(catalog,country)
 #Categorias
 def category_id(catalog,nombre_categoria):
     return me.getValue(mp.get(catalog['category'],nombre_categoria))
