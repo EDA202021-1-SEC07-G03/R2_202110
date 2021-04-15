@@ -91,7 +91,7 @@ while True:
         delta_time = round(stop_time - start_time,2)
         delta_memory = round(deltaMemory(start_memory, stop_memory),2)
         print('Paises:',mp.size(catalog['countries']))
-        print('Videos cargados:',contar_videos(catalog))
+        print('Videos cargados:',controller.loadVideos(catalog))
         print('Categorias cargadas:',mp.size(catalog['category']))
         print("Tiempo [ms]:",delta_time)
         print("Memoria [kB]:",delta_memory,)
