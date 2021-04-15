@@ -53,25 +53,21 @@ def newCatalog():
     return catalog
     
 # Funciones para creacion de datos
-def addVideo(catalog, video):
-    lt.addLast(catalog['videos'], video)
-
 def addCategory(catalog, category):
     if not(str(category['name']).strip()=='Comedy' and str(category['id'])=='34'):
         mp.put(catalog['category'], str(category['name']).strip(),str(category['id']))
-def add_node(catalog,input_file):
-        for video in input_file:
-            node=mp.newMap(20,maptype='PROBING',loadfactor=0.6)
-            for x in video:
-                mp.put(node,x,video[x])
-            if mp.contains(catalog['videos'],video['video_id'])==False:
-                mp.put(catalog['videos'],video['video_id'],node)
-            else:
-                mapa_interno=me.getValue(mp.get(catalog['videos'],video['video_id']))
-                actual=me.getValue(mp.get(mapa_interno,'trending_date'))
-                nuevo=me.getValue(mp.get(node,'trending_date'))
-                juntos=str(actual)+','+str(nuevo)
-                mp.put(mapa_interno,'trending_date',juntos)
+def add_node(catalog,video):
+    node=mp.newMap(20,maptype='PROBING',loadfactor=0.6)
+    for key in video:
+        mp.put(node,key,video[key])
+    if mp.contains(catalog['videos'],video['video_id'])==False:
+        mp.put(catalog['videos'],video['video_id'],node)
+    else:
+        mapa_interno=me.getValue(mp.get(catalog['videos'],video['video_id']))
+        actual=me.getValue(mp.get(mapa_interno,'trending_date'))
+        nuevo=me.getValue(mp.get(node,'trending_date'))
+        juntos=str(actual)+','+str(nuevo)
+        mp.put(mapa_interno,'trending_date',juntos)
 
 def dias_tendencia(mapa_interno):
     dates=str(me.getValue(mp.get(mapa_interno,'trending_date'))).split(',')
@@ -87,7 +83,9 @@ def videos_pais_categoria(catalog,pais,id,n):
     for i in range(1,lt.size(keys)+1):
         key=lt.getElement(keys,i)
         mapa_interno=me.getValue(mp.get(catalog['videos'],key))
-        if me.getValue(mp.get(mapa_interno,'country')).lower()==pais.lower() and me.getValue(mp.get(mapa_interno,'category_id'))==id:
+        country=me.getValue(mp.get(mapa_interno,'country'))
+        category_id=me.getValue(mp.get(mapa_interno,'category_id'))
+        if country.lower()==pais.lower() and category_id==id:
             lt.addLast(lista,mapa_interno)
     mrg.sort(lista,cmpVideosbyViews)
     if lt.size(lista)<n:
@@ -105,7 +103,8 @@ def videos_tendencia_pais(catalog,pais):
         key=lt.getElement(keys,i)
         mapa_interno=me.getValue(mp.get(catalog['videos'],key))
         dias=dias_tendencia(mapa_interno)
-        if me.getValue(mp.get(mapa_interno,'country')).lower()==pais.lower() and dias>mayor:
+        country=me.getValue(mp.get(mapa_interno,'country'))
+        if country.lower()==pais.lower() and dias>mayor:
             mayor=dias
             r=mapa_interno
     return r,mayor
@@ -119,8 +118,8 @@ def videos_tendencia_categoria(catalog,id):
         key=lt.getElement(keys,i)
         mapa_interno=me.getValue(mp.get(catalog['videos'],key))
         dias=dias_tendencia(mapa_interno)
-        id_video=me.getValue(mp.get(mapa_interno,'category_id'))
-        if id_video==id and dias>mayor:
+        category_id=me.getValue(mp.get(mapa_interno,'category_id'))
+        if category_id==id and dias>mayor:
             mayor=dias
             r=mapa_interno
     return r,mayor
@@ -132,7 +131,9 @@ def videos_pais_tag(catalog,pais,tag,n):
     for i in range(1,lt.size(keys)+1):
         key=lt.getElement(keys,i)
         mapa_interno=me.getValue(mp.get(catalog['videos'],key))
-        if me.getValue(mp.get(mapa_interno,'country')).lower()==pais.lower() and tag in me.getValue(mp.get(mapa_interno,'tags')):
+        country=me.getValue(mp.get(mapa_interno,'country'))
+        tags=me.getValue(mp.get(mapa_interno,'tags'))
+        if country.lower()==pais.lower() and tag in tags:
             lt.addLast(lista,mapa_interno)
     mrg.sort(lista,cmpVideosbyLikes)
     if lt.size(lista)<n:

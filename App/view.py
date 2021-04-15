@@ -115,7 +115,7 @@ while True:
 #REQUERIMIENTO 4
     elif int(inputs[0]) == 5:
         pais=(str(input('Digite el pais de su interes: ')))
-        tag=('"'+str(input('Digite el tag de su interes: '))+'"')
+        tag=input('Digite el tag de su interes: ')
         n= int(input('Indique la cantidad de videos que desea recibir: '))
         sublist=controller.videos_pais_tag(catalog,pais,tag,n)
         size=lt.size(sublist)
