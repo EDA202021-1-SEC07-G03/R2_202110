@@ -46,7 +46,7 @@ los mismos.
 
 # Construccion de modelos
 def newCatalog():
-    catalog = {'videos':None,
+    catalog = {'category_id':None,
                'category':None,
                'countries':None}
     catalog['category_id'] = mp.newMap(50,maptype='PROBING',loadfactor=0.6,comparefunction=cmpVideosbyId)
