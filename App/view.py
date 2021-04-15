@@ -26,6 +26,7 @@ import controller
 from DISClib.ADT import list as lt
 assert cf
 import time
+import tracemalloc
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import insertionsort as ins
@@ -48,6 +49,19 @@ def printMenu():
     print("4- Video trending por categoría")
     print("5- Videos con más likes por país y tag")
     print("6- Salir")
+
+def getTime():
+    return float(time.perf_counter()*1000)
+def getMemory():
+    return tracemalloc.take_snapshot()
+def deltaMemory(start_memory, stop_memory):
+    memory_diff = stop_memory.compare_to(start_memory, "filename")
+    delta_memory = 0.0
+    for stat in memory_diff:
+        delta_memory = delta_memory + stat.size_diff
+    delta_memory = delta_memory/1024.0
+    return delta_memory
+
 """
 Menu principal
 """
@@ -55,12 +69,24 @@ while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
+        tracemalloc.start()
+        start_time = getTime()
+        start_memory = getMemory()
+        #
         print("Inicializando Catálogo ....")
         catalog = controller.initCatalog()
         print("Cargando información de los archivos ....")
         answer = controller.loadData(catalog)
         print('Videos cargados: ' + str(mp.size(catalog['videos'])))
         print('Categorias cargadas:',mp.size(catalog['category']))
+        #
+        stop_memory = getMemory()
+        stop_time = getTime()
+        tracemalloc.stop()
+        delta_time = round(stop_time - start_time,2)
+        delta_memory = round(deltaMemory(start_memory, stop_memory),2)
+        print("Tiempo [ms]:",delta_time)
+        print("Memoria [kB]:",delta_memory,)
         print('-'*80)
    
 #REQUERIMIENTO 1
@@ -68,6 +94,10 @@ while True:
         pais=(str(input('Digite el pais de su interes: ')))
         nombre_categoria=(str(input('Digite la categoria de su interes: ')))
         n= int(input('Indique la cantidad de videos que desea recibir: '))
+        tracemalloc.start()
+        start_time = getTime()
+        start_memory = getMemory()
+        #
         sublist=controller.videos_pais_categoria(catalog,pais,nombre_categoria,n)
         keys=['trending_date', 'title','channel_title','publish_time','views','likes','dislikes']
         size=lt.size(sublist)
@@ -84,11 +114,24 @@ while True:
             print('VIDEO',i)
             for key in keys:
                 print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
+        #
+        stop_memory = getMemory()
+        stop_time = getTime()
+        tracemalloc.stop()
+        delta_time = round(stop_time - start_time,2)
+        delta_memory = round(deltaMemory(start_memory, stop_memory),2)
+        print("Tiempo [ms]:",delta_time)
+        print("Memoria [kB]:",delta_memory,)
+        
         print('-'*80)
 
 #REQUERIMIENTO 2
     elif int(inputs[0]) == 3:
         pais=(str(input('Digite el pais de su interes: ')))
+        tracemalloc.start()
+        start_time = getTime()
+        start_memory = getMemory()
+        #
         mapa=controller.videos_tendencia_pais(catalog,pais)[0]
         dias=controller.videos_tendencia_pais(catalog,pais)[1]
         keys=['title','channel_title','country']
@@ -97,11 +140,24 @@ while True:
         for key in keys:
             print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
         print('dias_tendencia:',dias)
+        #
+        stop_memory = getMemory()
+        stop_time = getTime()
+        tracemalloc.stop()
+        delta_time = round(stop_time - start_time,2)
+        delta_memory = round(deltaMemory(start_memory, stop_memory),2)
+        print("Tiempo [ms]:",delta_time)
+        print("Memoria [kB]:",delta_memory,)
+        
         print('-'*80)
 
 #REQUERIMIENTO 3
     elif int(inputs[0]) == 4:
         nombre_categoria=(str(input('Digite la categoria de su interes: ')))
+        tracemalloc.start()
+        start_time = getTime()
+        start_memory = getMemory()
+        #
         mapa=controller.videos_tendencia_categoria(catalog,nombre_categoria)[0]
         dias=controller.videos_tendencia_categoria(catalog,nombre_categoria)[1]
         keys=['title','channel_title','country','trending_date']
@@ -110,6 +166,15 @@ while True:
         for key in keys:
             print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
         print('dias_tendencia:',dias)
+        #
+        stop_memory = getMemory()
+        stop_time = getTime()
+        tracemalloc.stop()
+        delta_time = round(stop_time - start_time,2)
+        delta_memory = round(deltaMemory(start_memory, stop_memory),2)
+        print("Tiempo [ms]:",delta_time)
+        print("Memoria [kB]:",delta_memory,)
+        
         print('-'*80)
 
 #REQUERIMIENTO 4
@@ -117,6 +182,10 @@ while True:
         pais=(str(input('Digite el pais de su interes: ')))
         tag=input('Digite el tag de su interes: ')
         n= int(input('Indique la cantidad de videos que desea recibir: '))
+        tracemalloc.start()
+        start_time = getTime()
+        start_memory = getMemory()
+        #
         sublist=controller.videos_pais_tag(catalog,pais,tag,n)
         size=lt.size(sublist)
         keys=['title','channel_title','publish_time','views','likes','dislikes','tags']
@@ -138,7 +207,17 @@ while True:
                         print('tags:',tags)
                     else:
                         print(me.getKey(mp.get(mapa,key)),':',me.getValue(mp.get(mapa,key)))
-            print('-'*80)
+                        print('-'*80)
+        #
+        stop_memory = getMemory()
+        stop_time = getTime()
+        tracemalloc.stop()
+        delta_time = round(stop_time - start_time,2)
+        delta_memory = round(deltaMemory(start_memory, stop_memory),2)
+        print("Tiempo [ms]:",delta_time)
+        print("Memoria [kB]:",delta_memory,)
+        print('-'*80)
+        
     else:
         sys.exit(0)
 sys.exit(0)

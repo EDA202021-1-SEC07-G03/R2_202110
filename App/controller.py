@@ -64,7 +64,6 @@ def loadCategory(catalog):
     input_file2 = csv.DictReader(open(categoryfile, encoding='utf-8'),delimiter=('\t'))
     for category in input_file2:
         model.addCategory(catalog, category)
-
 #Categorias
 def category_id(catalog,nombre_categoria):
     return me.getValue(mp.get(catalog['category'],nombre_categoria))
