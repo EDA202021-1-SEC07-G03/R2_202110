@@ -124,7 +124,6 @@ def videos_tendencia_pais(catalog,pais):
     dias_tendencia(videos_category)
     for i in range(1,lt.size(videos_category)+1):
         mapa_interno=lt.getElement(videos_category,i)
-        print(me.getValue(mp.get(mapa_interno,'title')))
         dias=me.getValue(mp.get(mapa_interno,'dias'))
         if dias>mayor:
             mayor=dias
